@@ -2,12 +2,16 @@
   "compilerOptions": {
     "target": "ES2017",
     "lib": ["esnext"],
-    "module": "esnext",
-    "moduleResolution": "bundler",
+    "module": "commonjs",
+    "moduleResolution": "node",
     "strict": true,
-    "noEmit": true,
+    "noEmit": false,
+    "outDir": "dist",
+    "rootDir": "src",
     "resolveJsonModule": true,
-    "isolatedModules": true
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "isolatedModules": false
   },
   "include": ["src/**/*.ts"],
   "exclude": ["node_modules"]
