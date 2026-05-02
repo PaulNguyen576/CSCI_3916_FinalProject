@@ -48,10 +48,6 @@ export default function Page() {
     setIsHydrated(true);
   }, []);
 
-  if (!isHydrated) {
-    return <main className="workspace-shell text-slate-100" />;
-  }
-
   const resetForm = () => {
     setFormName("");
     setFormQuantity(1);
@@ -106,6 +102,10 @@ export default function Page() {
 
   const sortedItems = useMemo(() => getPantryViewItems(items), [items]);
   const shoppingList = useMemo(() => getShoppingList(sortedItems), [sortedItems]);
+
+  if (!isHydrated) {
+    return <main className="workspace-shell text-slate-100" />;
+  }
 
   const deleteItem = (id: number) => {
     setItems((prev) => prev.filter((p) => p.id !== id));
