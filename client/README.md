@@ -2,43 +2,48 @@
 
 This is the Next.js frontend for Smart Pantry & Expiry Guard.
 
+## Live URL
+
+- Client: **https://csci-3916-finalproject-1.onrender.com/**
+- Server: **https://csci-3916-finalproject.onrender.com**
+
 ## What it does
 
-The client renders a retro pantry board where each item appears as a draggable post-it note. It also includes:
-
-- a floating `+` button to open the add-item popup
-- drag and drop for notes
-- right-click panning on the canvas
-- zoom controls and Ctrl/Cmd + wheel zoom
-- expired-item deletion
-- optimistic saving of new items
+- Shows a sign in / sign up modal on load
+- After login, fetches the user's pantry items from the backend and renders them as draggable post-it notes
+- Color-coded status tags: green (Fresh), yellow (Expiring Soon), red (Expired)
+- Floating `+` button opens the add-item form
+- New items are saved optimistically to the board and POSTed to the backend scoped to the logged-in user
+- Shopping list panel shows items at or below their minimum threshold
+- Right-click drag to pan the canvas, zoom controls in the top-right corner
+- Sign Out button returns to the auth screen
 
 ## Main files
 
-- `src/app/page.tsx`: main dashboard, drag logic, add form, and MongoDB save request
-- `src/app/globals.css`: all visual styling for the board, notes, modal, and animations
-- `src/lib/pantry.ts`: pantry types, sample data, note sizing, and helper functions
-- `src/app/api/pantry/route.ts`: Next.js API route that writes pantry items to MongoDB
-
-## How saving works
-
-When you click `Save Item`:
-
-1. The form values are read from controlled inputs.
-2. A new pantry item is added to local React state immediately.
-3. A POST request is sent to `/api/pantry`.
-4. The route stores the item in the `pantryItems` collection inside the `pantry` database.
+- `src/app/page.tsx` - auth modal, board, drag logic, add form, per-user fetch and save
+- `src/app/globals.css` - all visual styling for the board, notes, modal, and animations
+- `src/lib/pantry.ts` - pantry types, note sizing constants, and helper functions
+- `src/app/layout.tsx` - root layout with Google Fonts
 
 ## Environment
 
-The client expects `MONGODB_URI` to be available in `client/.env.local` during development.
-
-For Render static-site hosting, `NEXT_PUBLIC_BACKEND_URL` is used to point the frontend at the deployed backend.
+- `NEXT_PUBLIC_BACKEND_URL` - points the client at the deployed backend (set in Render or `.env.local`)
+- `MONGODB_URI` - only needed locally if running the Next.js dev server with direct DB access
 
 ## Scripts
 
 From the `client/` folder:
 
-- `npm run dev` starts the Next.js dev server
-- `npm run build` builds the app and generates the static `out/` folder for Render
-- `npm run lint` runs ESLint
+```
+npm run dev      # start the Next.js dev server
+npm run build    # build and export static files to out/
+npm run lint     # run ESLint
+```
+
+## Deployment
+
+Deployed as a Render static site:
+
+- Root Directory: `client`
+- Build Command: `npm install && npm run build`
+- Publish Directory: `out`

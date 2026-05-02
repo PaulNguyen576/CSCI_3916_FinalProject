@@ -294,7 +294,7 @@ export default function Page() {
                   <div className="flex items-start justify-between gap-2">
                     <h3 className="text-sm font-semibold text-[#272117]">{item.productName}</h3>
                     <div className="relative flex flex-col items-start">
-                      <span className="inline-flex rounded-full border border-black/20 bg-white/55 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-[#2d271b]">
+                      <span className={`inline-flex rounded-full border border-black/20 px-2 py-1 text-[10px] font-bold uppercase tracking-wide ${isExpired ? "bg-red-500 text-white" : expiringSoon ? "bg-yellow-400 text-[#2d271b]" : "bg-green-500 text-white"}`}>
                         {isExpired ? "Expired" : expiringSoon ? "Soon" : "Fresh"}
                       </span>
                       {isExpired ? (
@@ -355,7 +355,7 @@ export default function Page() {
           </div>
         </div>
         <p className="mt-2 max-w-4xl text-xs text-[#d6efe0] sm:text-sm">
-          Signed in as <strong>{username}</strong> · Pan with scroll/trackpad, drag notes anywhere, zoom with Ctrl + wheel.
+          Signed in as <strong>{username}</strong> · Pan with scroll/trackpad, drag notes anywhere.
         </p>
       </header>
 
