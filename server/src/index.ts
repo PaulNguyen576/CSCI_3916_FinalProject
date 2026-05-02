@@ -145,13 +145,16 @@ const parseRequestBody = async (req: IncomingMessage): Promise<unknown> => {
 const startServer = () => {
   const server = createServer(async (req: IncomingMessage, res: ServerResponse) => {
     try {
-      const url = req.url || "/";
+      const url = (req.url || "/").split("?")[0];
 
       if (req.method === "OPTIONS") {
         res.writeHead(204, corsHeaders);
         res.end();
         return;
       }
+
+      // attach CORS headers to every response
+      Object.entries(corsHeaders).forEach(([k, v]) => res.setHeader(k, v));
 
       if (req.method === "GET" && (url === "/" || url === "/health")) {
         sendJson(res, 200, { ok: true, service: "smart-pantry-server" });
