@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useMemo, useState } from "react";
+import { useEffect, useRef, useMemo, useState } from "react";
 import {
   CANVAS_HEIGHT,
   CANVAS_WIDTH,
@@ -13,7 +13,8 @@ import {
 } from "../lib/pantry";
 
 export default function Page() {
-  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "https://csci-3916-finalproject.onrender.com";
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:10000";
+  const [isHydrated, setIsHydrated] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [notePositions, setNotePositions] = useState(initialNotePositions);
   const [draggingId, setDraggingId] = useState<number | null>(null);
@@ -42,6 +43,14 @@ export default function Page() {
   const [formMin, setFormMin] = useState<number>(1);
   const [formExpiry, setFormExpiry] = useState<string>("");
   const [formPrice, setFormPrice] = useState<number>(0);
+
+  useEffect(() => {
+    setIsHydrated(true);
+  }, []);
+
+  if (!isHydrated) {
+    return <main className="workspace-shell text-slate-100" />;
+  }
 
   const resetForm = () => {
     setFormName("");

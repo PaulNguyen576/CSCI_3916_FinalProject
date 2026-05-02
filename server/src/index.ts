@@ -88,7 +88,7 @@ export const formatMoney = (value: number): string =>
     currency: "USD",
     maximumFractionDigits: 2,
   }).format(value);
-import { fetchPantryItemsFromDb } from "./db";
+import { fetchPantryItemsFromDb, getPantryCollection } from "./db";
 
 export async function fetchPantry(): Promise<PantryItem[]> {
   try {
@@ -116,15 +116,42 @@ export const getShoppingList = async (items?: PantryItem[]): Promise<PantryViewI
 
 const port = Number(process.env.PORT || 10000);
 
+const corsHeaders: Record<string, string> = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type",
+};
+
 const sendJson = (res: ServerResponse, statusCode: number, payload: unknown) => {
-  res.writeHead(statusCode, { "Content-Type": "application/json" });
+  res.writeHead(statusCode, { ...corsHeaders, "Content-Type": "application/json" });
   res.end(JSON.stringify(payload));
+};
+
+const parseRequestBody = async (req: IncomingMessage): Promise<unknown> => {
+  const chunks: Buffer[] = [];
+
+  for await (const chunk of req) {
+    chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+  }
+
+  if (chunks.length === 0) {
+    return {};
+  }
+
+  const raw = Buffer.concat(chunks).toString("utf-8");
+  return JSON.parse(raw);
 };
 
 const startServer = () => {
   const server = createServer(async (req: IncomingMessage, res: ServerResponse) => {
     try {
       const url = req.url || "/";
+
+      if (req.method === "OPTIONS") {
+        res.writeHead(204, corsHeaders);
+        res.end();
+        return;
+      }
 
       if (req.method === "GET" && (url === "/" || url === "/health")) {
         sendJson(res, 200, { ok: true, service: "smart-pantry-server" });
@@ -134,6 +161,25 @@ const startServer = () => {
       if (req.method === "GET" && url === "/api/pantry") {
         const items = await getPantryViewItems();
         sendJson(res, 200, items);
+        return;
+      }
+
+      if (req.method === "POST" && url === "/api/pantry") {
+        const body = (await parseRequestBody(req)) as PantryItem;
+
+        if (!body?.productName) {
+          sendJson(res, 400, { error: "productName is required" });
+          return;
+        }
+
+        const collection = await getPantryCollection();
+        await collection.insertOne({
+          ...body,
+          barcode: body.barcode || "",
+          image: body.image || "",
+        });
+
+        sendJson(res, 201, { success: true, id: body.id });
         return;
       }
 
