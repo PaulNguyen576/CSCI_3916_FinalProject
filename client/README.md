@@ -33,11 +33,12 @@ When you click `Save Item`:
 
 The client expects `MONGODB_URI` to be available in `client/.env.local` during development.
 
+For Render static-site hosting, `NEXT_PUBLIC_BACKEND_URL` is used to point the frontend at the deployed backend.
+
 ## Scripts
 
 From the `client/` folder:
 
 - `npm run dev` starts the Next.js dev server
-- `npm run build` builds the app
-- `npm run start` runs the production build
+- `npm run build` builds the app and generates the static `out/` folder for Render
 - `npm run lint` runs ESLint

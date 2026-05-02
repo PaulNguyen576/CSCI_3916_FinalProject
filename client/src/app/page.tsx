@@ -13,6 +13,7 @@ import {
 } from "../lib/pantry";
 
 export default function Page() {
+  const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "https://csci-3916-finalproject.onrender.com";
   const [showAddModal, setShowAddModal] = useState(false);
   const [notePositions, setNotePositions] = useState(initialNotePositions);
   const [draggingId, setDraggingId] = useState<number | null>(null);
@@ -81,7 +82,7 @@ export default function Page() {
 
     // Persist to MongoDB via API in background
     try {
-      const response = await fetch("/api/pantry", {
+      const response = await fetch(`${backendUrl}/api/pantry`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(newItem),

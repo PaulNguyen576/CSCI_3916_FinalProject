@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: smart-pantry-client
+    runtime: static
+    rootDir: client
+    buildCommand: npm run build
+    staticPublishPath: out
+    envVars:
+      - key: NEXT_PUBLIC_BACKEND_URL
+        value: https://csci-3916-finalproject.onrender.com
