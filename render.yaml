@@ -2,9 +2,18 @@ services:
   - type: web
     name: smart-pantry-client
     runtime: static
-    rootDir: client
-    buildCommand: npm run build
-    staticPublishPath: out
+    buildCommand: cd client && npm install && npm run build
+    staticPublishPath: client/out
     envVars:
       - key: NEXT_PUBLIC_BACKEND_URL
         value: https://csci-3916-finalproject.onrender.com
+
+  - type: web
+    name: smart-pantry-server
+    runtime: node
+    rootDir: server
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: MONGODB_URI
+        sync: false
