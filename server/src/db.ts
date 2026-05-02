@@ -20,10 +20,10 @@ async function getClient(): Promise<MongoClient> {
   return client;
 }
 
-export async function getPantryCollection(): Promise<Collection<PantryItem>> {
+export async function getPantryCollection(): Promise<Collection<PantryItem & { username?: string }>> {
   const c = await getClient();
   const dbName = c.db().databaseName || "pantry";
-  return c.db(dbName).collection<PantryItem>("pantryItems");
+  return c.db(dbName).collection<PantryItem & { username?: string }>("pantryItems");
 }
 
 export async function getUsersCollection(): Promise<Collection<{ username: string; password: string }>> {
