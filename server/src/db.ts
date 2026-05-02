@@ -26,6 +26,12 @@ export async function getPantryCollection(): Promise<Collection<PantryItem>> {
   return c.db(dbName).collection<PantryItem>("pantryItems");
 }
 
+export async function getUsersCollection(): Promise<Collection<{ username: string; password: string }>> {
+  const c = await getClient();
+  const dbName = c.db().databaseName || "pantry";
+  return c.db(dbName).collection("users");
+}
+
 export async function fetchPantryItemsFromDb(): Promise<PantryItem[]> {
   try {
     const coll = await getPantryCollection();
