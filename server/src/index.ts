@@ -13,6 +13,9 @@ export type PantryViewItem = PantryItem & {
   daysToExpiry: number;
 };
 
+import { createServer } from "node:http";
+import type { IncomingMessage, ServerResponse } from "node:http";
+
 export const pantryItems: PantryItem[] = [
   {
     id: 1,
@@ -110,3 +113,42 @@ export const getShoppingList = async (items?: PantryItem[]): Promise<PantryViewI
   const list = await getPantryViewItems(items);
   return list.filter((item) => item.quantity <= item.minThreshold);
 };
+
+const port = Number(process.env.PORT || 10000);
+
+const sendJson = (res: ServerResponse, statusCode: number, payload: unknown) => {
+  res.writeHead(statusCode, { "Content-Type": "application/json" });
+  res.end(JSON.stringify(payload));
+};
+
+const startServer = () => {
+  const server = createServer(async (req: IncomingMessage, res: ServerResponse) => {
+    try {
+      const url = req.url || "/";
+
+      if (req.method === "GET" && (url === "/" || url === "/health")) {
+        sendJson(res, 200, { ok: true, service: "smart-pantry-server" });
+        return;
+      }
+
+      if (req.method === "GET" && url === "/api/pantry") {
+        const items = await getPantryViewItems();
+        sendJson(res, 200, items);
+        return;
+      }
+
+      sendJson(res, 404, { error: "Not found" });
+    } catch (error) {
+      console.error("server error:", error);
+      sendJson(res, 500, { error: "Internal server error" });
+    }
+  });
+
+  server.listen(port, () => {
+    console.log(`Smart Pantry server listening on port ${port}`);
+  });
+};
+
+if (require.main === module) {
+  startServer();
+}
