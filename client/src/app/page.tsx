@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useMemo, useState } from "react";
+import { useRef, useMemo, useState } from "react";
 import {
   CANVAS_HEIGHT,
   CANVAS_WIDTH,
@@ -14,7 +14,6 @@ import {
 
 export default function Page() {
   const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:10000";
-  const [isHydrated, setIsHydrated] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
   const [notePositions, setNotePositions] = useState(initialNotePositions);
   const [draggingId, setDraggingId] = useState<number | null>(null);
@@ -43,10 +42,6 @@ export default function Page() {
   const [formMin, setFormMin] = useState<number>(1);
   const [formExpiry, setFormExpiry] = useState<string>("");
   const [formPrice, setFormPrice] = useState<number>(0);
-
-  useEffect(() => {
-    setIsHydrated(true);
-  }, []);
 
   const resetForm = () => {
     setFormName("");
@@ -103,10 +98,6 @@ export default function Page() {
   const sortedItems = useMemo(() => getPantryViewItems(items), [items]);
   const shoppingList = useMemo(() => getShoppingList(sortedItems), [sortedItems]);
 
-  if (!isHydrated) {
-    return <main className="workspace-shell text-slate-100" />;
-  }
-
   const deleteItem = (id: number) => {
     setItems((prev) => prev.filter((p) => p.id !== id));
     setNotePositions((prev) => {
@@ -154,7 +145,7 @@ export default function Page() {
   };
 
   return (
-    <main className="workspace-shell text-slate-100">
+    <main className="workspace-shell text-slate-100" suppressHydrationWarning>
       <div
         ref={scrollRef}
         className={`workspace-scroll ${isPanning ? "is-panning" : ""}`}
